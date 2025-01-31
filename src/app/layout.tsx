@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Sidebar from "@/components/Sidebar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,11 +24,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html className="dark h-screen" lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex h-screen overflow-hidden bg-neutral-950`}
       >
-        {children}
+        <aside className="w-[260px] p-4 hidden md:block text-white border-r flex-shrink-0 h-screen overflow-y-auto">
+          <Sidebar />
+        </aside>
+
+        <main className="flex-1 h-screen overflow-y-auto">{children}</main>
       </body>
     </html>
   );
