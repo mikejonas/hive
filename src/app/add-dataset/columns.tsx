@@ -7,6 +7,12 @@ export const columns: ColumnDef<LLMResponse>[] = [
   {
     accessorKey: "timestamp",
     header: "Timestamp",
+    enableSorting: true,
+    sortingFn: (rowA, rowB) => {
+      const dateA = new Date(rowA.getValue("timestamp"));
+      const dateB = new Date(rowB.getValue("timestamp"));
+      return dateA.getTime() - dateB.getTime();
+    },
     cell: ({ row }) => (
       <div className="flex items-center gap-2">
         {row.original.status === "error" && (
@@ -20,10 +26,14 @@ export const columns: ColumnDef<LLMResponse>[] = [
   {
     accessorKey: "model",
     header: "Model",
+    enableSorting: true,
+    sortingFn: "alphanumeric",
   },
   {
     accessorKey: "prompt_tokens",
     header: "Prompt Tokens",
+    enableSorting: true,
+    sortingFn: "alphanumeric",
   },
   {
     accessorKey: "completion_tokens",
