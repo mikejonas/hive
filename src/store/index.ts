@@ -35,7 +35,7 @@ interface Dataset {
 
 interface DatasetStore {
   datasets: Record<string, Dataset>;
-  addDataset: (label: string, responses: LLMResponse[]) => void;
+  addDataset: (label: string, responses: LLMResponse[]) => Dataset;
   removeDataset: (id: string) => void;
   getDataset: (id: string) => Dataset | undefined;
 }
@@ -44,20 +44,22 @@ export const useDatasetStore = create<DatasetStore>((set, get) => ({
   datasets: {},
 
   addDataset: (label, responses) => {
-    if (!responses || responses.length === 0) return;
-
     const newId = crypto.randomUUID();
+    const newDataset: Dataset = {
+      id: newId,
+      label,
+      createdAt: new Date().toISOString(),
+      responses,
+    };
+
     set((state) => ({
       datasets: {
         ...state.datasets,
-        [newId]: {
-          id: newId,
-          label,
-          createdAt: new Date().toISOString(),
-          responses,
-        },
+        [newId]: newDataset,
       },
     }));
+
+    return newDataset;
   },
 
   removeDataset: (id) =>
