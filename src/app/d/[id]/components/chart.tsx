@@ -16,159 +16,9 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { ResponsiveContainer } from "recharts";
+import { LLMResponse } from "@/store";
 
-// Sample data from API responses
-const apiResponses = [
-  // January 1
-  { timestamp: "2024-01-01T00:01:23Z", model: "gpt-4", total_tokens: 557 },
-  {
-    timestamp: "2024-01-01T00:03:45Z",
-    model: "gpt-3.5-turbo",
-    total_tokens: 1345,
-  },
-  { timestamp: "2024-01-01T00:05:12Z", model: "claude-3", total_tokens: 2801 },
-  { timestamp: "2024-01-01T00:08:30Z", model: "gpt-4", total_tokens: 0 },
-  {
-    timestamp: "2024-01-01T00:10:15Z",
-    model: "gpt-3.5-turbo",
-    total_tokens: 245,
-  },
-
-  // January 2
-  { timestamp: "2024-01-02T01:15:32Z", model: "gpt-4", total_tokens: 890 },
-  {
-    timestamp: "2024-01-02T02:45:50Z",
-    model: "gpt-3.5-turbo",
-    total_tokens: 1567,
-  },
-  { timestamp: "2024-01-02T03:05:14Z", model: "claude-3", total_tokens: 3201 },
-  { timestamp: "2024-01-02T04:21:19Z", model: "gpt-4", total_tokens: 320 },
-
-  // January 3
-  { timestamp: "2024-01-03T07:30:55Z", model: "gpt-4", total_tokens: 1023 },
-  {
-    timestamp: "2024-01-03T08:14:10Z",
-    model: "gpt-3.5-turbo",
-    total_tokens: 1145,
-  },
-  { timestamp: "2024-01-03T09:50:45Z", model: "claude-3", total_tokens: 2987 },
-  { timestamp: "2024-01-03T11:32:21Z", model: "gpt-4", total_tokens: 560 },
-
-  // January 4
-  { timestamp: "2024-01-04T01:20:37Z", model: "gpt-4", total_tokens: 1300 },
-  {
-    timestamp: "2024-01-04T02:35:49Z",
-    model: "gpt-3.5-turbo",
-    total_tokens: 1440,
-  },
-  { timestamp: "2024-01-04T04:42:13Z", model: "claude-3", total_tokens: 2750 },
-  { timestamp: "2024-01-04T05:50:55Z", model: "gpt-4", total_tokens: 480 },
-
-  // January 5
-  { timestamp: "2024-01-05T10:25:30Z", model: "gpt-4", total_tokens: 910 },
-  {
-    timestamp: "2024-01-05T11:45:15Z",
-    model: "gpt-3.5-turbo",
-    total_tokens: 1230,
-  },
-  { timestamp: "2024-01-05T13:15:40Z", model: "claude-3", total_tokens: 3400 },
-  { timestamp: "2024-01-05T14:30:22Z", model: "gpt-4", total_tokens: 1020 },
-
-  // January 6
-  { timestamp: "2024-01-06T00:12:10Z", model: "gpt-4", total_tokens: 760 },
-  {
-    timestamp: "2024-01-06T02:50:33Z",
-    model: "gpt-3.5-turbo",
-    total_tokens: 1450,
-  },
-  { timestamp: "2024-01-06T04:45:12Z", model: "claude-3", total_tokens: 2600 },
-
-  // January 7
-  { timestamp: "2024-01-07T08:30:55Z", model: "gpt-4", total_tokens: 890 },
-  {
-    timestamp: "2024-01-07T10:15:40Z",
-    model: "gpt-3.5-turbo",
-    total_tokens: 1780,
-  },
-  { timestamp: "2024-01-07T12:50:30Z", model: "claude-3", total_tokens: 3100 },
-
-  // January 8
-  { timestamp: "2024-01-08T00:05:10Z", model: "gpt-4", total_tokens: 1123 },
-  {
-    timestamp: "2024-01-08T02:30:20Z",
-    model: "gpt-3.5-turbo",
-    total_tokens: 1425,
-  },
-  { timestamp: "2024-01-08T05:45:35Z", model: "claude-3", total_tokens: 3500 },
-
-  // January 9
-  { timestamp: "2024-01-09T07:20:30Z", model: "gpt-4", total_tokens: 1250 },
-  {
-    timestamp: "2024-01-09T09:35:50Z",
-    model: "gpt-3.5-turbo",
-    total_tokens: 1380,
-  },
-  { timestamp: "2024-01-09T11:45:55Z", model: "claude-3", total_tokens: 2700 },
-
-  // January 10
-  { timestamp: "2024-01-10T03:50:45Z", model: "gpt-4", total_tokens: 1360 },
-  {
-    timestamp: "2024-01-10T05:15:55Z",
-    model: "gpt-3.5-turbo",
-    total_tokens: 1245,
-  },
-  { timestamp: "2024-01-10T07:42:30Z", model: "claude-3", total_tokens: 2900 },
-
-  // January 11
-  { timestamp: "2024-01-11T01:25:12Z", model: "gpt-4", total_tokens: 1400 },
-  {
-    timestamp: "2024-01-11T03:10:45Z",
-    model: "gpt-3.5-turbo",
-    total_tokens: 1550,
-  },
-  { timestamp: "2024-01-11T06:25:30Z", model: "claude-3", total_tokens: 3150 },
-
-  // January 12
-  { timestamp: "2024-01-12T02:50:15Z", model: "gpt-4", total_tokens: 1200 },
-  {
-    timestamp: "2024-01-12T04:35:50Z",
-    model: "gpt-3.5-turbo",
-    total_tokens: 1455,
-  },
-  { timestamp: "2024-01-12T08:45:30Z", model: "claude-3", total_tokens: 3200 },
-
-  // January 13
-  { timestamp: "2024-01-13T07:10:45Z", model: "gpt-4", total_tokens: 1345 },
-  {
-    timestamp: "2024-01-13T09:35:22Z",
-    model: "gpt-3.5-turbo",
-    total_tokens: 1380,
-  },
-  { timestamp: "2024-01-13T12:20:50Z", model: "claude-3", total_tokens: 3105 },
-
-  // January 14
-  { timestamp: "2024-01-14T02:15:33Z", model: "gpt-4", total_tokens: 1500 },
-  {
-    timestamp: "2024-01-14T04:50:40Z",
-    model: "gpt-3.5-turbo",
-    total_tokens: 1290,
-  },
-  { timestamp: "2024-01-14T06:40:25Z", model: "claude-3", total_tokens: 2900 },
-];
-
-// Aggregate token usage per model per day
-const aggregatedData = apiResponses.reduce((acc, response) => {
-  const date = response.timestamp.split("T")[0]; // Extract date (YYYY-MM-DD)
-  if (!acc[date]) {
-    acc[date] = { date };
-  }
-  acc[date][response.model] =
-    (acc[date][response.model] || 0) + response.total_tokens;
-  return acc;
-}, {} as Record<string, Record<string, any>>);
-
-const chartData = Object.values(aggregatedData);
-
+// TODO: It will only work for these specific models for now
 const chartConfig: ChartConfig = {
   "gpt-4": {
     label: "GPT-4",
@@ -184,11 +34,36 @@ const chartConfig: ChartConfig = {
   },
 };
 
-export const Chart: React.FC = () => {
+interface ChartProps {
+  data: LLMResponse[];
+}
+
+export const Chart: React.FC<ChartProps> = ({ data }) => {
+  // TODO - move this to the parent
+  const aggregatedData = React.useMemo(() => {
+    const aggregation: Record<string, Record<string, number | string>> = {};
+    data.forEach((item: LLMResponse) => {
+      const date = new Date(item.timestamp);
+      // Example: "2024-01-01 00:00"
+      const day = item.timestamp.split("T")[0];
+      const hour = date.getHours().toString().padStart(2, "0");
+      const key = `${day} ${hour}:00`;
+
+      if (!aggregation[key]) {
+        aggregation[key] = { date: key };
+      }
+      aggregation[key][item.model] =
+        ((aggregation[key][item.model] as number) || 0) +
+        (item.total_tokens || 0);
+    });
+    return Object.values(aggregation);
+  }, [data]);
+
   const [hiddenModels, setHiddenModels] = React.useState<Set<string>>(
     new Set()
   );
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleLegendClick = (e: any) => {
     setHiddenModels((prev) => {
       const newHidden = new Set(prev);
@@ -212,7 +87,7 @@ export const Chart: React.FC = () => {
       <CardContent className="flex-1 px-4 pt-6 pb-0 min-h-0">
         <ChartContainer config={chartConfig} className="h-full w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData}>
+            <BarChart data={aggregatedData}>
               <CartesianGrid
                 strokeDasharray="3 3"
                 stroke="#374151"
@@ -226,11 +101,9 @@ export const Chart: React.FC = () => {
                 minTickGap={32}
                 tick={{ fill: "#9CA3AF" }}
                 tickFormatter={(value) => {
-                  const date = new Date(value);
-                  return date.toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                  });
+                  const [datePart, timePart] = value.split(" ");
+                  const [hour] = timePart.split(":");
+                  return `${datePart}`;
                 }}
               />
               <YAxis
@@ -253,11 +126,14 @@ export const Chart: React.FC = () => {
                     className="w-[150px]"
                     nameKey="tokens"
                     labelFormatter={(value) => {
-                      return new Date(value).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      });
+                      const date = new Date(value);
+                      return isNaN(date.getTime())
+                        ? value
+                        : date.toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          });
                     }}
                   />
                 }
@@ -269,6 +145,7 @@ export const Chart: React.FC = () => {
                   stackId="a"
                   fill={chartConfig[model].color}
                   hide={hiddenModels.has(model)}
+                  isAnimationActive={false}
                 />
               ))}
             </BarChart>

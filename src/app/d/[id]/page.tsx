@@ -5,7 +5,6 @@ import { useDatasetStore } from "@/store";
 import { DataTable } from "../../add-dataset/data-table";
 import { columns } from "../../add-dataset/columns";
 import { Chart } from "./components/chart";
-import { Chart2 } from "./components/chart2";
 
 export default function DatasetPage() {
   const { id } = useParams();
@@ -19,17 +18,14 @@ export default function DatasetPage() {
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
-      {/* Top Section - Title */}
       <div className="flex-none p-4">
         <h1 className="text-2xl font-semibold">{dataset.label}</h1>
       </div>
 
-      {/* Chart Section - Fixed size */}
       <div className="flex-none h-[500px]">
-        <Chart />
+        <Chart data={dataset.responses} />
       </div>
 
-      {/* Bottom Half - Fixed container with scrollable content */}
       <div className="flex-1 min-h-0">
         <div className="h-full overflow-y-auto">
           <DataTable columns={columns} data={dataset.responses} />
