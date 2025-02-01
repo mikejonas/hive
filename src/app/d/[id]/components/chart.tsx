@@ -36,15 +36,15 @@ const chartConfig: ChartConfig = {
 
 interface ChartProps {
   data: LLMResponse[];
+  label: string;
 }
 
-export const Chart: React.FC<ChartProps> = ({ data }) => {
+export const Chart: React.FC<ChartProps> = ({ data, label }) => {
   // TODO - move this to the parent
   const aggregatedData = React.useMemo(() => {
     const aggregation: Record<string, Record<string, number | string>> = {};
     data.forEach((item: LLMResponse) => {
       const date = new Date(item.timestamp);
-      // Example: "2024-01-01 00:00"
       const day = item.timestamp.split("T")[0];
       const hour = date.getHours().toString().padStart(2, "0");
       const key = `${day} ${hour}:00`;
@@ -53,8 +53,7 @@ export const Chart: React.FC<ChartProps> = ({ data }) => {
         aggregation[key] = { date: key };
       }
       aggregation[key][item.model] =
-        ((aggregation[key][item.model] as number) || 0) +
-        (item.total_tokens || 0);
+        ((aggregation[key][item.model] as number) || 0) + (item.cost_usd || 0);
     });
     return Object.values(aggregation);
   }, [data]);
@@ -78,10 +77,10 @@ export const Chart: React.FC<ChartProps> = ({ data }) => {
 
   return (
     <Card className="h-full rounded-none flex flex-col min-h-0">
-      <CardHeader className="flex-none border-b border-gray-800 p-6">
-        <CardTitle className="text-gray-100">AI Model Usage</CardTitle>
+      <CardHeader className="flex-none border-b text-3xl border-gray-800 p-6">
+        <CardTitle className="text-gray-100">{label}</CardTitle>
         <CardDescription className="text-gray-400">
-          Token usage per model over time
+          Cost per model (hourly)
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-1 px-4 pt-6 pb-0 min-h-0">
@@ -101,15 +100,15 @@ export const Chart: React.FC<ChartProps> = ({ data }) => {
                 minTickGap={32}
                 tick={{ fill: "#9CA3AF" }}
                 tickFormatter={(value) => {
-                  const [datePart, timePart] = value.split(" ");
-                  const [hour] = timePart.split(":");
-                  return `${datePart}`;
+                  const [datePart] = value.split(" ");
+                  return datePart;
                 }}
               />
               <YAxis
                 tick={{ fill: "#9CA3AF" }}
                 tickLine={false}
                 axisLine={false}
+                tickFormatter={(value) => `$${value.toFixed(2)}`}
               />
               <Legend
                 verticalAlign="bottom"
@@ -126,14 +125,12 @@ export const Chart: React.FC<ChartProps> = ({ data }) => {
                     className="w-[150px]"
                     nameKey="tokens"
                     labelFormatter={(value) => {
-                      const date = new Date(value);
-                      return isNaN(date.getTime())
-                        ? value
-                        : date.toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                            year: "numeric",
-                          });
+                      const [datePart, timePart] = value.split(" ");
+                      return `${new Date(datePart).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })} ${timePart}`;
                     }}
                   />
                 }

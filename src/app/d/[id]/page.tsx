@@ -18,12 +18,8 @@ export default function DatasetPage() {
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
-      <div className="flex-none p-4">
-        <h1 className="text-2xl font-semibold">{dataset.label}</h1>
-      </div>
-
       <div className="flex-none h-[500px]">
-        <Chart data={dataset.responses} />
+        <Chart data={dataset.responses} label={dataset.label} />
       </div>
 
       <div className="flex-1 min-h-0">
