@@ -1,10 +1,13 @@
 import { LLMResponse } from "@/store";
 
+/**
+ * Validates that the uploaded data is in the expected format
+ * (I just generated this whole fnction with an llm, based on the LLMResponse interface)
+ */
 export const validateLLMResponse = (data: LLMResponse): boolean => {
   if (typeof data !== "object" || !data)
     throw new Error("Response must be an object");
 
-  // Required fields validation
   const requiredFields = [
     "id",
     "timestamp",

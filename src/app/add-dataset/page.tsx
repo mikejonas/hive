@@ -9,7 +9,7 @@ import { useDatasetStore } from "@/store";
 import { useRouter } from "next/navigation";
 import { validateLLMResponse } from "./utils";
 
-export default function DemoPage() {
+export default function AddDatasetPage() {
   const [error, setError] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -63,8 +63,7 @@ export default function DemoPage() {
       // If we get here, validation passed
       const dataset = addDataset(title, responses);
       if (dataset) {
-        // Make sure we have the dataset ID
-        router.push(`/d/${dataset.id}`); // Use the dataset ID, not the response ID
+        router.push(`/d/${dataset.id}`);
       }
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -80,12 +79,34 @@ export default function DemoPage() {
   return (
     <div className="container mx-auto p-6">
       <h1 className="text-2xl font-semibold mb-4">Add a dataset</h1>
+
+      <div className="mb-4 text-neutral-400">
+        Download mock datasets:{" "}
+        <a
+          href="/sample-data/mockdata_5.json"
+          className="text-blue-500 hover:underline"
+          download
+          target="_blank"
+        >
+          5 items
+        </a>
+        {", "}
+        <a
+          href="/sample-data/mockdata_1000.json"
+          className="text-blue-500 hover:underline"
+          download
+          target="_blank"
+        >
+          1000 items
+        </a>
+      </div>
+
       <Input
         type="text"
         placeholder="Label"
         value={title}
         onChange={(e) => {
-          setError(null); // Clear error when typing
+          setError(null);
           setTitle(e.target.value);
         }}
         className="mb-4"
@@ -113,7 +134,7 @@ export default function DemoPage() {
               onClick={() => {
                 setFile(null);
                 setTitle("");
-                setError(null); // Clear error when removing file
+                setError(null);
               }}
               cursor="pointer"
             />{" "}

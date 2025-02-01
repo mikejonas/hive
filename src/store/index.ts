@@ -36,7 +36,6 @@ interface Dataset {
 interface DatasetStore {
   datasets: Record<string, Dataset>;
   addDataset: (label: string, responses: LLMResponse[]) => Dataset;
-  removeDataset: (id: string) => void;
   getDataset: (id: string) => Dataset | undefined;
 }
 
@@ -61,16 +60,6 @@ export const useDatasetStore = create<DatasetStore>((set, get) => ({
 
     return newDataset;
   },
-
-  removeDataset: (id) =>
-    set((state) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { [id]: _, ...remainingDatasets } = state.datasets;
-      return { datasets: remainingDatasets };
-    }),
-
-  getDatasetLabels: () =>
-    Object.values(get().datasets).map(({ id, label }) => ({ id, label })),
 
   getDataset: (id) => get().datasets[id],
 }));

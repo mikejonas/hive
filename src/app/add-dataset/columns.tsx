@@ -84,7 +84,6 @@ export const columns: ColumnDef<LLMResponse>[] = [
       </span>
     ),
   },
-  // Separate Evaluation Metrics into Individual Columns
   {
     accessorKey: "evaluation_metrics.relevance_score",
     header: "Relevance",
@@ -117,17 +116,4 @@ export const columns: ColumnDef<LLMResponse>[] = [
         ? row.original.evaluation_metrics.response_quality
         : "N/A",
   },
-  // Uncomment if you need an Error column
-  // {
-  //   accessorKey: "error",
-  //   header: "Error",
-  //   cell: ({ row }) =>
-  //     row.original.error ? (
-  //       <span className="text-red-500">
-  //         {row.original.error.type}: {row.original.error.message}
-  //       </span>
-  //     ) : (
-  //       "No Error"
-  //     ),
-  // },
 ];
